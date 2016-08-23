@@ -12,6 +12,7 @@
 <body>
 	<div class="container">
 		<h1>Form for upload image.</h1>
+		<%=request.getRealPath("/")%>
 		<form method="POST" action="<%=request.getContextPath()%>/upload"
 			enctype="multipart/form-data">
 			<div class="form-group">
