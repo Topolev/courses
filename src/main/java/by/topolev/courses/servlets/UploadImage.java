@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -35,7 +36,7 @@ public class UploadImage extends HttpServlet {
 		pathUploadImage = InitValues.getValue("pathUploadImage");
 		LOG.debug(String.format("The asigning directory for upload: %s", pathUploadImage));
 		File file = new File(pathUploadImage);
-		if (!file.exists()){
+		if (!file.exists()) {
 			file.mkdir();
 			LOG.debug(String.format("Create folder %s", file.getAbsolutePath()));
 		}
@@ -56,48 +57,54 @@ public class UploadImage extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		LOG.info("Execiting doPOST() for upload image");
+		List<String> errorsUpload = new ArrayList<String>();
+
 		boolean isMultipart = ServletFileUpload.isMultipartContent(req);
 		ErrorFieldJson errorField = null;
 		if (!isMultipart) {
+			errorsUpload.add("Form isn't exsited multipart data");
 			LOG.info("Form isn't exsited multipart data");
 		} else {
 			List<FileItem> items = null;
 			try {
 				items = upload.parseRequest(req);
-			} catch (FileUploadException e) {
-				LOG.info("Problems with parsing request to FileItem", e);
-			}
+				
+				String fileName = getValueField("file_name", items);
+				errorField = validateFieldFilename(fileName);
 
-			String fileName = getValueField("file_name", items);
-
-			errorField = validateFieldFilename(fileName);
-
-			if (errorField.isValid()) {
-				File file = new File(pathUploadImage + fileName);
-				for (FileItem item : items) {
-					if (!item.isFormField()) {
-						if (!(new AvailableImageExpansionValidator().isValidData(item.getName()))) {
-							errorField.setValid(false);
-							errorField.setErrorMessage("Upload file should contain an extension 'JPG', 'GIF', 'PNG'");
-						} else {
-							try {
-								item.write(file);
-								LOG.info(String.format("Image upload is success, file path = %s",
-										file.getAbsolutePath()));
-							} catch (Exception e) {
-								LOG.info("Problem with upload image", e);
+				if (errorField.isValid()) {
+					File file = new File(pathUploadImage + fileName);
+					for (FileItem item : items) {
+						if (!item.isFormField()) {
+							if (!(new AvailableImageExpansionValidator().isValidData(item.getName()))) {
+								errorField.setValid(false);
+								errorField
+										.setErrorMessage("Upload file should contain an extension 'JPG', 'GIF', 'PNG'");
+							} else {
+								try {
+									item.write(file);
+									LOG.info(String.format("Image upload is success, file path = %s",
+											file.getAbsolutePath()));
+								} catch (Exception e) {
+									LOG.info("Problem with upload image", e);
+								}
 							}
 						}
 					}
 				}
+			} catch (FileUploadException e) {
+				errorsUpload.add("Problems with parsing request to FileItem");
+				LOG.info("Problems with parsing request to FileItem", e);
 			}
+
 		}
-		
-		if (errorField.isValid()){
+
+		if (errorField.isValid()) {
 			RequestDispatcher dispetcher = req.getRequestDispatcher("list_image.jsp");
 			dispetcher.forward(req, resp);
 		} else {
 			RequestDispatcher dispetcher = req.getRequestDispatcher("error_upload.jsp");
+			req.setAttribute("errors", errorField);
 			dispetcher.forward(req, resp);
 			LOG.debug("ERROR");
 		}

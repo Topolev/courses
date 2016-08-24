@@ -31,12 +31,11 @@ public class InitValues {
 	
 	public static String getValue(String nameValue){
 		if (!defaultValues.containsKey(nameValue)) throw new IllegalArgumentException();
-		return defaultValues.get(nameValue);
-		/*if (properties == null){
+		if (properties == null){
 			return defaultValues.get(nameValue);
 		} else{
 			properties.getProperty(nameValue);
 		}
-		return null;*/
+		return null;
 	}
 }
