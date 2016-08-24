@@ -26,6 +26,7 @@ public class ShowImage extends HttpServlet {
 	
 	public void init(){
 		pathUploadImage = InitValues.getValue("pathUploadImage");
+		pathUploadImage = "upload/";
 	}
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
