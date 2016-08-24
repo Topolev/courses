@@ -21,11 +21,6 @@
 					placeholder="File name" id="file-name" />
 				<p class="help-block">Enter file name with expansion.</p>
 			</div>
-			<!--  
-			<div class="form-group">
-				<label>File input:</label>
-				<input type="file"  name="file"/>
-			</div>-->
 			<div class="form-group">
 				<label>File input:</label>
 				<div class="file_upload">

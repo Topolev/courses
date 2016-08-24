@@ -33,8 +33,8 @@ public class UploadImage extends HttpServlet {
 
 	public void init() {
 		pathUploadImage = InitValues.getValue("pathUploadImage");
-		
-		File file = new File("upload/");
+		LOG.debug(String.format("The asigning directory for upload: %s", pathUploadImage));
+		File file = new File(pathUploadImage);
 		if (!file.exists()){
 			file.mkdir();
 			LOG.debug(String.format("Create folder %s", file.getAbsolutePath()));
