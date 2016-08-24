@@ -23,6 +23,7 @@ public class InitValues {
 			property.load(fis);
 			properties = property;
 			LOG.debug("Properties file upload success");
+			LOG.debug(String.format("Test property file, pathUploadImage = %s", property.getProperty("pathUploadImage")));
 		} catch (IOException e) {
 			LOG.debug("Property file config.properties isn't excited or problem with loading");
 		}	
@@ -30,11 +31,12 @@ public class InitValues {
 	
 	public static String getValue(String nameValue){
 		if (!defaultValues.containsKey(nameValue)) throw new IllegalArgumentException();
-		if (properties == null){
+		return defaultValues.get(nameValue);
+		/*if (properties == null){
 			return defaultValues.get(nameValue);
 		} else{
 			properties.getProperty(nameValue);
 		}
-		return null;
+		return null;*/
 	}
 }
