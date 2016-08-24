@@ -1,6 +1,6 @@
 
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ page import="by.topolev.courses.validators.json.ErrorFieldJson" %>
+<%@ page import="java.util.List" %>
 <html>
 <head>
 <link href="<c:url value="/resources/css/bootstrap.min.css" />" rel="stylesheet" />
@@ -14,8 +14,8 @@
 			<a href="<%=request.getContextPath()%>/form_upload_image.jsp" id="return-href">Return to uploading form</a>
 		</h1>
 		<%
-			ErrorFieldJson errors = (ErrorFieldJson) request.getAttribute("errors");
-			pageContext.setAttribute("errors", errors.getErrorMessages());
+			List<String> errors = (List<String>) request.getAttribute("errors");
+			pageContext.setAttribute("errors", errors);
 		%>
 		<c:forEach items="${errors}" var="error">
 			<span class="error-message">

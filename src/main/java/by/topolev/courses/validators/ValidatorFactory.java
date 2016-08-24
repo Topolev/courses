@@ -6,9 +6,9 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ValidatorConfig {
+public class ValidatorFactory {
 	private static Map<String, Validator> validators = new HashMap<String, Validator>();
-	private static final Logger LOG = LoggerFactory.getLogger(ValidatorConfig.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ValidatorFactory.class);
 	static {
 		validators.put("availableImageExpansion", new AvailableImageExpansionValidator());
 		validators.put("uniqueImageFileName", new UniqueImageFileNameValidator());

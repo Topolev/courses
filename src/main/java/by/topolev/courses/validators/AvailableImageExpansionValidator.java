@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 public class AvailableImageExpansionValidator implements Validator {
 
 	public boolean isValidData(String value) {
-
+		if (value.trim().equals("")) return false;
 		String[] splits = value.split("\\.");
 		if (splits.length == 1) {
 			return false;
