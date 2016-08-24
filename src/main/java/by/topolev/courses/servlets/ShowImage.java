@@ -18,14 +18,14 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import by.topolev.config.InitValues;
+import by.topolev.config.ConfigUtil;
 
 public class ShowImage extends HttpServlet {
 	private static final Logger LOG = LoggerFactory.getLogger(ShowImage.class);
 	private static String pathUploadImage;
 	
 	public void init(){
-		pathUploadImage = InitValues.getValue("pathUploadImage");
+		pathUploadImage = ConfigUtil.getValue("pathUploadImage");
 		pathUploadImage = "upload/";
 	}
 	@Override

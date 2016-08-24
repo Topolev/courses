@@ -16,7 +16,7 @@
 
 	<servlet>
 		<servlet-name>ValidateFileNameField</servlet-name>
-		<servlet-class>by.topolev.courses.ajax.ValidField</servlet-class>
+		<servlet-class>by.topolev.courses.servlets.ValidField</servlet-class>
 	</servlet>
 
 	<servlet-mapping>

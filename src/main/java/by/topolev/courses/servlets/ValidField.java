@@ -1,4 +1,4 @@
-package by.topolev.courses.ajax;
+package by.topolev.courses.servlets;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,14 +16,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import by.ropolev.courses.jsonobject.DataJson;
 import by.ropolev.courses.jsonobject.ErrorJson;
-import by.topolev.config.InitValues;
+import by.topolev.config.ConfigUtil;
 import by.topolev.courses.convertors.DataJsonToDataConvertor;
 import by.topolev.courses.convertors.ValidateResultToErrorJson;
 import by.topolev.courses.validator.Data;
 import by.topolev.courses.validator.DataValidator;
 import by.topolev.courses.validator.ValidateResult;
-import by.topolev.courses.validators.ValidateField;
-import by.topolev.courses.validators.json.ErrorFieldJson;
+
 
 public class ValidField extends HttpServlet {
 	private static final Logger LOG = LoggerFactory.getLogger(ValidField.class);
@@ -31,7 +30,7 @@ public class ValidField extends HttpServlet {
 	private static ObjectMapper map = new ObjectMapper();
 
 	public void init() {
-		pathUploadImage = InitValues.getValue("pathUploadImage");
+		pathUploadImage = ConfigUtil.getValue("pathUploadImage");
 	}
 
 	

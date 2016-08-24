@@ -19,28 +19,30 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import by.topolev.config.InitValues;
+import by.topolev.config.ConfigUtil;
 import by.topolev.courses.validator.Data;
 import by.topolev.courses.validator.DataValidator;
 import by.topolev.courses.validator.ValidateResult;
-import by.topolev.courses.validators.AvailableImageExpansionValidator;
-import by.topolev.courses.validators.ValidateField;
-import by.topolev.courses.validators.json.ErrorFieldJson;
+import static by.topolev.config.ConfigUtil.*;
+import static by.topolev.config.Validators.*;
 
 public class UploadImage extends HttpServlet {
-	private static ServletFileUpload upload;
+
 	private static final Logger LOG = LoggerFactory.getLogger(UploadImage.class);
+
+	private static ServletFileUpload upload;
 	private static String pathUploadImage;
 
 	public void init() {
-		pathUploadImage = InitValues.getValue("pathUploadImage");
-		LOG.debug(String.format("The asigning directory for upload: %s", pathUploadImage));
-		File file = new File(pathUploadImage);
-		if (!file.exists()) {
-			file.mkdir();
-			LOG.debug(String.format("Create folder %s", file.getAbsolutePath()));
-		}
+		pathUploadImage = getValue(PATH_UPLOAD_IMAGE);
 
+		LOG.debug("The asigning directory for upload: {}", pathUploadImage);
+
+		createUploadDirIfNotExist();
+		initServletFileUpload();
+	}
+
+	private void initServletFileUpload() {
 		// Create a factory for disk-based file items
 		DiskFileItemFactory factory = new DiskFileItemFactory();
 
@@ -51,7 +53,14 @@ public class UploadImage extends HttpServlet {
 
 		// Create a new file upload handler
 		upload = new ServletFileUpload(factory);
+	}
 
+	private void createUploadDirIfNotExist() {
+		File file = new File(pathUploadImage);
+		if (!file.exists()) {
+			file.mkdir();
+			LOG.debug("Create folder for uploading images: {}", file.getAbsolutePath());
+		}
 	}
 
 	@Override
@@ -68,41 +77,49 @@ public class UploadImage extends HttpServlet {
 			List<FileItem> items = null;
 			try {
 				items = upload.parseRequest(req);
+
+				String userFileName = getValueField("file_name", items);
+				FileItem uploadImage = getUploadImage(items);
+	
+				validateEnteredFilename(errors, userFileName);
+				validateUploadFilename(errors, uploadImage);
+
+				if (errors.isValid()) {
+					File file = new File(pathUploadImage + userFileName);
+					try {
+						uploadImage.write(file);
+						LOG.debug(String.format("Image upload is success, file path = %s", file.getAbsolutePath()));
+					} catch (Exception e) {
+						errors.setErrorMessage("Problem with upload image");
+						LOG.debug("Problem with upload image", e);
+					}
+				}
+
 			} catch (FileUploadException e) {
 				errors.setErrorMessage("Problems with parsing request to FileItem");
 				LOG.info("Problems with parsing request to FileItem", e);
 			}
 
-			if (errors.isValid()) {
-				String userFileName = getValueField("file_name", items);
-				validateData(userFileName, errors, "availableImageExpansion","uniqueImageFileName");
-				if (errors.isValid()) {
-					FileItem uploadImage = getUploadImage(items);
-					validateData(uploadImage.getName(), errors, "emptyString","availableImageExpansion");
-					if (errors.isValid()){
-						File file = new File(pathUploadImage + userFileName);
-						try{
-							uploadImage.write(file);
-							LOG.debug(String.format("Image upload is success, file path = %s",
-									file.getAbsolutePath()));
-						} catch (Exception e){
-							errors.setErrorMessage("Problem with upload image");
-							LOG.debug("Problem with upload image", e);
-						}
-					}
-				}
-			}
 		}
 
 		if (errors.isValid()) {
 			RequestDispatcher dispetcher = req.getRequestDispatcher("list_image.jsp");
 			dispetcher.forward(req, resp);
 		} else {
+			LOG.debug("Uploading image is not successful.");
 			RequestDispatcher dispetcher = req.getRequestDispatcher("error_upload.jsp");
 			req.setAttribute("errors", errors.getErrorMessages());
 			dispetcher.forward(req, resp);
-			LOG.debug("ERROR");
+
 		}
+	}
+
+	private void validateUploadFilename(ValidateResult errors, FileItem uploadImage) {
+		validateData(uploadImage.getName(), errors, "emptyString", UPLOAD_FILENAME_VALIDATOR);
+	}
+
+	private void validateEnteredFilename(ValidateResult errors, String userFileName) {
+		validateData(userFileName, errors, ENTERED_FILENAME_VALIDATOR, "uniqueImageFileName");
 	}
 
 	private String getValueField(String nameField, List<FileItem> items) {
@@ -114,17 +131,18 @@ public class UploadImage extends HttpServlet {
 		}
 		return valueField;
 	}
-	
-	private FileItem getUploadImage(List<FileItem> items){
-		for (FileItem item : items){
-			if (!item.isFormField()) return item;
+
+	private FileItem getUploadImage(List<FileItem> items) {
+		for (FileItem item : items) {
+			if (!item.isFormField())
+				return item;
 		}
 		return null;
 	}
 
-	private void validateData(String valueData, ValidateResult result, String... listValidators){
+	private void validateData(String valueData, ValidateResult result, String... listValidators) {
 		List<String> typeValidators = new ArrayList<String>();
-		for (String typeValidator : listValidators){
+		for (String typeValidator : listValidators) {
 			typeValidators.add(typeValidator);
 		}
 		Data data = new Data(valueData, typeValidators);

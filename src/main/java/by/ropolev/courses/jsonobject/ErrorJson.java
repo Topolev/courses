@@ -1,9 +1,9 @@
-package by.topolev.courses.validators.json;
+package by.ropolev.courses.jsonobject;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ErrorFieldJson {
+public class ErrorJson {
 	private boolean valid = true;
 	private List<String> errorMessages = new ArrayList<String>();
 	public boolean isValid() {
@@ -21,5 +21,4 @@ public class ErrorFieldJson {
 	public void setErrorMessage(String errorMessage){
 		errorMessages.add(errorMessage);
 	}
-
 }
