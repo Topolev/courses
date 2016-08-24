@@ -1,12 +1,9 @@
 package by.topolev.courses.servlets;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
@@ -23,6 +20,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import by.topolev.config.InitValues;
+import by.topolev.courses.validator.Data;
+import by.topolev.courses.validator.DataValidator;
+import by.topolev.courses.validator.ValidateResult;
 import by.topolev.courses.validators.AvailableImageExpansionValidator;
 import by.topolev.courses.validators.ValidateField;
 import by.topolev.courses.validators.json.ErrorFieldJson;
@@ -56,55 +56,50 @@ public class UploadImage extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		LOG.info("Execiting doPOST() for upload image");
-		List<String> errorsUpload = new ArrayList<String>();
+		LOG.info("Executing doPOST() for upload image");
+		ValidateResult errors = new ValidateResult();
 
 		boolean isMultipart = ServletFileUpload.isMultipartContent(req);
-		ErrorFieldJson errorField = null;
+
 		if (!isMultipart) {
-			errorsUpload.add("Form isn't exsited multipart data");
+			errors.setErrorMessage("Form isn't exsited multipart data");
 			LOG.info("Form isn't exsited multipart data");
 		} else {
 			List<FileItem> items = null;
 			try {
 				items = upload.parseRequest(req);
-				
-				String fileName = getValueField("file_name", items);
-				errorField = validateFieldFilename(fileName);
-
-				if (errorField.isValid()) {
-					File file = new File(pathUploadImage + fileName);
-					for (FileItem item : items) {
-						if (!item.isFormField()) {
-							if (!(new AvailableImageExpansionValidator().isValidData(item.getName()))) {
-								errorField.setValid(false);
-								errorField
-										.setErrorMessage("Upload file should contain an extension 'JPG', 'GIF', 'PNG'");
-							} else {
-								try {
-									item.write(file);
-									LOG.info(String.format("Image upload is success, file path = %s",
-											file.getAbsolutePath()));
-								} catch (Exception e) {
-									LOG.info("Problem with upload image", e);
-								}
-							}
-						}
-					}
-				}
 			} catch (FileUploadException e) {
-				errorsUpload.add("Problems with parsing request to FileItem");
+				errors.setErrorMessage("Problems with parsing request to FileItem");
 				LOG.info("Problems with parsing request to FileItem", e);
 			}
 
+			if (errors.isValid()) {
+				String userFileName = getValueField("file_name", items);
+				validateData(userFileName, errors, "availableImageExpansion","uniqueImageFileName");
+				if (errors.isValid()) {
+					FileItem uploadImage = getUploadImage(items);
+					validateData(uploadImage.getName(), errors, "emptyString","availableImageExpansion");
+					if (errors.isValid()){
+						File file = new File(pathUploadImage + userFileName);
+						try{
+							uploadImage.write(file);
+							LOG.debug(String.format("Image upload is success, file path = %s",
+									file.getAbsolutePath()));
+						} catch (Exception e){
+							errors.setErrorMessage("Problem with upload image");
+							LOG.debug("Problem with upload image", e);
+						}
+					}
+				}
+			}
 		}
 
-		if (errorField.isValid()) {
+		if (errors.isValid()) {
 			RequestDispatcher dispetcher = req.getRequestDispatcher("list_image.jsp");
 			dispetcher.forward(req, resp);
 		} else {
 			RequestDispatcher dispetcher = req.getRequestDispatcher("error_upload.jsp");
-			req.setAttribute("errors", errorField);
+			req.setAttribute("errors", errors.getErrorMessages());
 			dispetcher.forward(req, resp);
 			LOG.debug("ERROR");
 		}
@@ -119,13 +114,20 @@ public class UploadImage extends HttpServlet {
 		}
 		return valueField;
 	}
+	
+	private FileItem getUploadImage(List<FileItem> items){
+		for (FileItem item : items){
+			if (!item.isFormField()) return item;
+		}
+		return null;
+	}
 
-	private ErrorFieldJson validateFieldFilename(String fileName) {
-		ValidateField validateField = new ValidateField();
-		validateField.setValidator("availableImageExpansion");
-		validateField.setValidator("uniqueImageFileName");
-		validateField.setValue(fileName);
-		ErrorFieldJson errorField = validateField.validateField();
-		return errorField;
+	private void validateData(String valueData, ValidateResult result, String... listValidators){
+		List<String> typeValidators = new ArrayList<String>();
+		for (String typeValidator : listValidators){
+			typeValidators.add(typeValidator);
+		}
+		Data data = new Data(valueData, typeValidators);
+		DataValidator.validField(data, result);
 	}
 }

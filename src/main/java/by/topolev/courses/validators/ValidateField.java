@@ -17,7 +17,7 @@ public class ValidateField {
 	public ValidateField(ValidFieldJson validField){
 		String[] validators = validField.getValidators();
 		for (String validator : validators){
-			this.validators.add(ValidatorConfig.getValidator(validator));
+			this.validators.add(ValidatorFactory.getValidator(validator));
 			LOG.debug(String.format("Create validator with name = '%s'", validator));
 		}
 		this.value = validField.getValue();
@@ -25,7 +25,7 @@ public class ValidateField {
 	public ValidateField(){}
 	
 	public void setValidator(String typeValidator){
-		this.validators.add(ValidatorConfig.getValidator(typeValidator));
+		this.validators.add(ValidatorFactory.getValidator(typeValidator));
 		LOG.debug(String.format("Create validator with name = '%s'", typeValidator));
 	}
 	
