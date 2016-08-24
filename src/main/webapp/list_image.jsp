@@ -24,7 +24,7 @@
 		<%
 			String rootDirectory = InitValues.getValue("pathUploadImage");
 
-			File directory = new File(rootDirectory);
+			File directory = new File("upload/");
 			if (directory.isDirectory() && directory.exists()) {
 				pageContext.setAttribute("files", directory.list());
 				pageContext.setAttribute("rootUrl", request.getContextPath());
