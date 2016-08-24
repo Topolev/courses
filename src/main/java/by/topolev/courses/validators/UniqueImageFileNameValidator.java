@@ -8,6 +8,7 @@ import by.topolev.config.InitValues;
 public class UniqueImageFileNameValidator implements Validator {
 
 	public boolean isValidData(String value) {
+		if (value.trim().equals("")) return true;
 		String filePath = InitValues.getValue("pathUploadImage");
 		File file = new File(filePath + value);
 		if (file.exists()) {
