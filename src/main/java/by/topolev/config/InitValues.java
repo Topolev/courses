@@ -17,7 +17,6 @@ public class InitValues {
 
 	static {
 		defaultValues.put("pathUploadImage", "upload/");
-
 	}
 
 	public InitValues() {
@@ -28,21 +27,20 @@ public class InitValues {
 			properties = property;
 			LOG.debug("Properties file upload success");
 			LOG.debug(
-					String.format("Test property file, pathUploadImage = %s", property.getProperty("pathUploadImage")));
+					String.format("Test property file, pathUploadImage = %s", properties.getProperty("pathUploadImage")));
 		} catch (IOException e) {
 			LOG.debug("Property file config.properties isn't excited or problem with loading");
 		}
 	}
 
 	public static String getValue(String nameValue) {
+		LOG.debug(String.format("Get config value with name = '%s'",nameValue));
 		if (!defaultValues.containsKey(nameValue))
 			throw new IllegalArgumentException();
 		if (properties == null) {
 			return defaultValues.get(nameValue);
 		} else {
-			LOG.debug(String.format("To get value '%s'. Result: '%s'", nameValue, properties.getProperty(nameValue)));
-			properties.getProperty(nameValue);
+			return properties.getProperty(nameValue);
 		}
-		return null;
 	}
 }
