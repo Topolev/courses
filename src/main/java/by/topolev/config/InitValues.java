@@ -16,7 +16,7 @@ public class InitValues {
 	private static final Logger LOG = LoggerFactory.getLogger(InitValues.class);
 	
 	static {
-		defaultValues.put("pathUploadImage", "j:/upload/");
+		defaultValues.put("pathUploadImage", "upload/");
 		Properties property = new Properties();
 		try {			
 			FileInputStream fis = new FileInputStream("src/main/resources/config.properties");
