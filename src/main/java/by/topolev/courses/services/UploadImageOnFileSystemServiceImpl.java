@@ -2,8 +2,7 @@ package by.topolev.courses.services;
 
 import static by.topolev.config.ConfigUtil.PATH_UPLOAD_IMAGE;
 import static by.topolev.config.ConfigUtil.getValue;
-import static by.topolev.config.Validators.ENTERED_FILENAME_EXTANSION_VALIDATOR;
-import static by.topolev.config.Validators.UPLOAD_FILENAME_EXTANSION_VALIDATOR;
+import static by.topolev.config.Validators.*;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -88,11 +87,11 @@ public class UploadImageOnFileSystemServiceImpl implements UploadImageService {
 	}
 
 	private void validateUploadFilename(ValidationResult errors, FileItem uploadImage) {
-		validateData(uploadImage.getName(), errors, "emptyString", UPLOAD_FILENAME_EXTANSION_VALIDATOR);
+		validateData(uploadImage.getName(), errors, UPLOAD_FILENAME_EXTANSION_VALIDATOR);
 	}
 
 	private void validateEnteredFilename(ValidationResult errors, String userFileName) {
-		validateData(userFileName, errors, ENTERED_FILENAME_EXTANSION_VALIDATOR, "uniqueImageFileName");
+		validateData(userFileName, errors, ENTERED_FILENAME_EXTANSION_VALIDATOR, UNIQUE_FILENAME_VALIDATOR);
 	}
 
 	private void validateData(String valueData, ValidationResult result, String... listValidators) {

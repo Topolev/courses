@@ -18,21 +18,18 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import by.topolev.config.ConfigUtil;
+import static by.topolev.config.ConfigUtil.*;
 
 public class ShowImageServlet extends HttpServlet {
-	private static final Logger LOG = LoggerFactory.getLogger(ShowImageServlet.class);
-	private static String pathUploadImage;
 	
-	public void init(){
-		pathUploadImage = ConfigUtil.getValue("pathUploadImage");
-		pathUploadImage = "upload/";
-	}
+	private static final Logger LOG = LoggerFactory.getLogger(ShowImageServlet.class);
+
+	
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		
-		System.out.println(req.getParameter("file"));
-		String rootDirectory = pathUploadImage;
+		String rootDirectory = getValue(PATH_UPLOAD_IMAGE);
 		File file = new File(rootDirectory + req.getParameter("file"));
 		if (!file.exists()){
 			LOG.info(String.format("File with path '%s' isn't excited.", file.getAbsolutePath()));

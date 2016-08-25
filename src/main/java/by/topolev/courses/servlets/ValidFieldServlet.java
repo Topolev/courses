@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import by.ropolev.courses.jsonobject.DataJson;
@@ -25,17 +27,20 @@ import by.topolev.courses.validator.ValidationResult;
 
 public class ValidFieldServlet extends HttpServlet {
 	private static final Logger LOG = LoggerFactory.getLogger(ValidFieldServlet.class);
-	private static String pathUploadImage;
 	private static ObjectMapper map = new ObjectMapper();
-
-	public void init() {
-		pathUploadImage = ConfigUtil.getValue("pathUploadImage");
-	}
 
 	@Override
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		LOG.debug("Executing ajax check field ");
 		BufferedReader in = req.getReader();
+		
+		ErrorJson errorJson = validateField(in);
+
+		PrintWriter out = resp.getWriter();
+		out.print(map.writeValueAsString(errorJson));
+	}
+
+	private ErrorJson validateField(BufferedReader in) throws IOException, JsonParseException, JsonMappingException {
 		String json = in.readLine();
 
 		DataJson dataJson = map.readValue(json, DataJson.class);
@@ -45,9 +50,7 @@ public class ValidFieldServlet extends HttpServlet {
 		DataValidator.validField(data, errors);
 
 		ErrorJson errorJson = new ValidateResultToErrorJson().convert(errors);
-
-		PrintWriter out = resp.getWriter();
-		out.print(map.writeValueAsString(errorJson));
+		return errorJson;
 	}
 
 }

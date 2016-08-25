@@ -13,8 +13,7 @@ public class ValidatorFactory {
 	static {
 		accessValidators.put(ENTERED_FILENAME_EXTANSION_VALIDATOR, new AvailableImageExtansionValidator(ERR_MSG_ENTERED_FILENAME));
 		accessValidators.put(UPLOAD_FILENAME_EXTANSION_VALIDATOR, new AvailableImageExtansionValidator(ERR_MSG_UPLOAD_FILENAME));
-		accessValidators.put("uniqueImageFileName", new UniqueImageFileNameValidator());
-		accessValidators.put("emptyString", new EmptyStringValidator());
+		accessValidators.put(UNIQUE_FILENAME_VALIDATOR, new UniqueImageFileNameValidator());
 	}
 	
 	public static Validator getValidator(String typeValidator){
