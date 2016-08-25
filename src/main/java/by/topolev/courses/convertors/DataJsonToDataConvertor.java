@@ -17,4 +17,13 @@ public class DataJsonToDataConvertor implements Convertor<DataJson, Data> {
 		to.setListTypeValidators(listValidators);
 	}
 
+	@Override
+	public Data convert(DataJson source) {
+		Data target = new Data();
+		convert(source, target);
+		return target;
+	}
+	
+	
+
 }

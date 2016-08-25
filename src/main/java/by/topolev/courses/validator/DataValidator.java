@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 public class DataValidator {
 	private static final Logger LOG = LoggerFactory.getLogger(DataValidator.class);
 	
-	public static void validField(Data field, ValidateResult result){
+	public static void validField(Data field, ValidationResult result){
 		List<Validator> validators = createValidators(field.getListTypeValidators());
 		for (Validator validator : validators){
 			LOG.debug(String.format("Validate data = '%s' using validator '%s'", field.getValue(), validator.getClass()));

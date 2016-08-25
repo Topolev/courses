@@ -20,8 +20,8 @@ import org.slf4j.LoggerFactory;
 
 import by.topolev.config.ConfigUtil;
 
-public class ShowImage extends HttpServlet {
-	private static final Logger LOG = LoggerFactory.getLogger(ShowImage.class);
+public class ShowImageServlet extends HttpServlet {
+	private static final Logger LOG = LoggerFactory.getLogger(ShowImageServlet.class);
 	private static String pathUploadImage;
 	
 	public void init(){

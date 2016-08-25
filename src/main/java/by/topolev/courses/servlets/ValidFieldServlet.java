@@ -21,11 +21,10 @@ import by.topolev.courses.convertors.DataJsonToDataConvertor;
 import by.topolev.courses.convertors.ValidateResultToErrorJson;
 import by.topolev.courses.validator.Data;
 import by.topolev.courses.validator.DataValidator;
-import by.topolev.courses.validator.ValidateResult;
+import by.topolev.courses.validator.ValidationResult;
 
-
-public class ValidField extends HttpServlet {
-	private static final Logger LOG = LoggerFactory.getLogger(ValidField.class);
+public class ValidFieldServlet extends HttpServlet {
+	private static final Logger LOG = LoggerFactory.getLogger(ValidFieldServlet.class);
 	private static String pathUploadImage;
 	private static ObjectMapper map = new ObjectMapper();
 
@@ -33,30 +32,22 @@ public class ValidField extends HttpServlet {
 		pathUploadImage = ConfigUtil.getValue("pathUploadImage");
 	}
 
-	
 	@Override
-	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
+	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		LOG.debug("Executing ajax check field ");
 		BufferedReader in = req.getReader();
 		String json = in.readLine();
-		
+
 		DataJson dataJson = map.readValue(json, DataJson.class);
-		LOG.debug(dataJson.getValue());
-		LOG.debug(dataJson.getValidators().toString());
-		
-		Data data = new Data();
-		ValidateResult errors = new ValidateResult();
-		ErrorJson errorJson = new ErrorJson();
-		new DataJsonToDataConvertor().convert(dataJson, data);
-		
-		
+
+		Data data = new DataJsonToDataConvertor().convert(dataJson);
+		ValidationResult errors = new ValidationResult();
 		DataValidator.validField(data, errors);
-		
-		new ValidateResultToErrorJson().convert(errors, errorJson);
-		
+
+		ErrorJson errorJson = new ValidateResultToErrorJson().convert(errors);
+
 		PrintWriter out = resp.getWriter();
 		out.print(map.writeValueAsString(errorJson));
 	}
-	
-	
+
 }

@@ -25,7 +25,7 @@ public class AvailableImageExtansionValidator implements Validator {
 			String ext = splits[1].toUpperCase();
 			Pattern p = Pattern.compile(IMG_EXTANSION);
 			Matcher m = p.matcher(ext);
-			return !m.matches();
+			return m.matches();
 		}
 		return false;
 	}

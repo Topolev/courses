@@ -3,7 +3,7 @@ package by.topolev.courses.validator;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ValidateResult {
+public class ValidationResult {
 	private boolean isValid = true;
 	private List<String> errorMessages = new ArrayList<String>();
 	public boolean isValid() {
