@@ -1,5 +1,5 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ page import="by.topolev.config.InitValues"%>
+<%@ page import="by.topolev.config.ConfigUtil"%>
 <%@ page import="java.io.File"%>
 <%@ page import="java.util.List"%>
 
@@ -22,7 +22,7 @@
 		</h1>
 		
 		<%
-			String rootDirectory = InitValues.getValue("pathUploadImage");
+			String rootDirectory = ConfigUtil.getValue(ConfigUtil.PATH_UPLOAD_IMAGE);
 
 			File directory = new File(rootDirectory);
 			if (directory.isDirectory() && directory.exists()) {

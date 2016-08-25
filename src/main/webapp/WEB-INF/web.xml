@@ -6,17 +6,17 @@
 
 	<servlet>
 		<servlet-name>UploadImage</servlet-name>
-		<servlet-class>by.topolev.courses.servlets.UploadImage</servlet-class>
+		<servlet-class>by.topolev.courses.servlets.UploadImageServlet</servlet-class>
 	</servlet>
 
 	<servlet>
 		<servlet-name>ShowImage</servlet-name>
-		<servlet-class>by.topolev.courses.servlets.ShowImage</servlet-class>
+		<servlet-class>by.topolev.courses.servlets.ShowImageServlet</servlet-class>
 	</servlet>
 
 	<servlet>
 		<servlet-name>ValidateFileNameField</servlet-name>
-		<servlet-class>by.topolev.courses.ajax.ValidField</servlet-class>
+		<servlet-class>by.topolev.courses.servlets.ValidFieldServlet</servlet-class>
 	</servlet>
 
 	<servlet-mapping>

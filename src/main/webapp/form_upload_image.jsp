@@ -11,7 +11,7 @@
 </head>
 <body>
 	<div class="container">
-		<h1>Form for upload image.</h1>
+		<h1>Form for uploading image.</h1>
 		<form method="POST" action="<%=request.getContextPath()%>/upload"
 			enctype="multipart/form-data">
 			<div class="form-group">
@@ -38,7 +38,7 @@
 <script>
 	
 	var validFilename = {};
-	validFilename['validators'] = ['availableImageExpansion','uniqueImageFileName'];
+	validFilename['validators'] = ['UNIQUE_FILENAME_VALIDATOR','ENTERED_FILENAME_EXTANSION_VALIDATOR'];
 	
 	
 	$("#file-name").on('change', function(){

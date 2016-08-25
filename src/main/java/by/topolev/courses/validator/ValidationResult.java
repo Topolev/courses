@@ -1,16 +1,16 @@
-package by.topolev.courses.validators.json;
+package by.topolev.courses.validator;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ErrorFieldJson {
-	private boolean valid = true;
+public class ValidationResult {
+	private boolean isValid = true;
 	private List<String> errorMessages = new ArrayList<String>();
 	public boolean isValid() {
-		return valid;
+		return isValid;
 	}
-	public void setValid(boolean valid) {
-		this.valid = valid;
+	public void setValid(boolean isValid) {
+		this.isValid = isValid;
 	}
 	public List<String> getErrorMessages() {
 		return errorMessages;
@@ -19,7 +19,7 @@ public class ErrorFieldJson {
 		this.errorMessages = errorMessages;
 	}
 	public void setErrorMessage(String errorMessage){
-		errorMessages.add(errorMessage);
+		this.setValid(false);
+		this.errorMessages.add(errorMessage);
 	}
-
 }
